@@ -6746,6 +6746,8 @@ public class WifiStateMachine extends StateMachine implements WifiNative.WifiRss
                         sendNetworkStateChangeBroadcast(mLastBssid);
                     }
                     mDriverRoaming = true;
+                    sendMessageDelayed(obtainMessage(CMD_IP_RECHABILITY_SESSION_END,
+                                       0, 0), 10000);
                     break;
                 case CMD_RSSI_POLL:
                     if (message.arg1 == mRssiPollToken) {
@@ -7118,6 +7120,8 @@ public class WifiStateMachine extends StateMachine implements WifiNative.WifiRss
                         // mIpManager.confirmConfiguration() is called within
                         // the handling of SupplicantState.COMPLETED.
                         mDriverRoaming = true;
+                        sendMessageDelayed(obtainMessage(CMD_IP_RECHABILITY_SESSION_END,
+                                           0, 0), 10000);
                         transitionTo(mConnectedState);
                     } else {
                         messageHandlingStatus = MESSAGE_HANDLING_STATUS_DISCARD;
@@ -7184,12 +7188,6 @@ public class WifiStateMachine extends StateMachine implements WifiNative.WifiRss
             if (mWifiConnectivityManager != null) {
                 mWifiConnectivityManager.handleConnectionStateChanged(
                         WifiConnectivityManager.WIFI_STATE_CONNECTED);
-            }
-
-            if (mDriverRoaming) {
-                sendMessageDelayed(obtainMessage(CMD_IP_RECHABILITY_SESSION_END,
-                        0, 0), 10000);
-
             }
             registerConnected();
             lastConnectAttemptTimestamp = 0;
